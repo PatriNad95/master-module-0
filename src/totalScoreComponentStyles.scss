@@ -1,0 +1,9 @@
+$background: indianred;
+
+.result-background {
+  background-color: $background;
+}
+
+:global(.card-title) {
+  color: $background;
+}
