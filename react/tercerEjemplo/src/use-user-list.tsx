@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import { useDebounce } from "use-debounce";
 
 export const useUserList = () => {
   //Custom hook to fetch users
-  const [filter, setFilter] = useState("");
-  const [users, setUsers] = useState([]);
+  const [filter, setFilter] = React.useState("");
+  const [users, setUsers] = React.useState([]);
   const [filterDebounced] = useDebounce(filter, 500);
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetch(
       `https://jsonplaceholder.typicode.com/users?name_like=${filterDebounced}`
     )
@@ -15,5 +15,9 @@ export const useUserList = () => {
       .then((json) => setUsers(json));
   }, [filterDebounced]);
 
-  return { filter, setFilter, users };
+  const Input: React.FC = () => (
+    <input value={filter} onChange={(e) => setFilter(e.target.value)} />
+  );
+
+  return { users, Input };
 };
