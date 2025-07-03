@@ -1,26 +1,45 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
+import { TitleContext, TitleProvider } from "./context";
 
-export const App = () => {
-  const [count, setCount] = React.useState(0);
+const UserContext = React.createContext(undefined);
+
+const UserProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  const [user, setUser] = React.useState({ surname: "Doe" });
+  const { title } = React.useContext(TitleContext);
 
   return (
-    <>
-      <h1>Hello Lemoncoders</h1>
-      <button onClick={() => setCount(count + 1)}>
-        Increment Count: {count}
-      </button>
-      <Demo fullname="John Doe" />
-    </>
+    <UserContext.Provider value={{ user, title }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 
-interface Props {
-  fullname: string;
-}
+export const App = () => {
+  return (
+    <TitleProvider>
+      <UserProvider>
+        <h1>Hola</h1>
+        <MyChildComponent />
+      </UserProvider>
+    </TitleProvider>
+  );
+};
 
-const Demo: React.FC<Props> = React.memo((props) => {
-  const { fullname } = props;
-  console.log("Demo component rendered");
+const MyChildComponent = () => {
+  // const user = React.useContext(UserContext);
+  return (
+    <div style={{ border: "solid 1px black", marginTop: "50px" }}>
+      ContentPage
+      <MyGrandChildComponent />
+    </div>
+  );
+};
 
-  return <h2>Hello {fullname}</h2>;
-});
+const MyGrandChildComponent = () => {
+  const { user, title } = React.useContext(UserContext);
+  return (
+    <div style={{ backgroundColor: "red" }}>
+      Surname: {user.surname} {title}{" "}
+    </div>
+  );
+};
