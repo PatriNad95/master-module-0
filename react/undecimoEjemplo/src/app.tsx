@@ -2,18 +2,45 @@ import React from "react";
 import { Detail } from "./detail";
 import { Login } from "./login";
 import { List } from "./list";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { MembersProvider } from "./members.provider";
 
-export const App: React.FC = () => <AppRouter />;
+export const App: React.FC = () => (
+  <>
+    <h1>My example</h1>
+    <MembersProvider>
+      <AppRouter />
+    </MembersProvider>
+  </>
+);
+
+const PublicRouter: React.FC = () => {
+  return (
+    <Routes>
+      <Route path={"/"} element={<Login />} />
+      <Route path={"*"} element={<Navigate to={"/public"} />} />
+    </Routes>
+  );
+};
+
+const PrivateRouter: React.FC = () => {
+  return (
+    <Routes>
+      <Route path={"list"} element={<List />} />
+      <Route path={"detail/:id"} element={<Detail />} />
+      <Route path={"*"} element={<Navigate to={"list"} />} />
+    </Routes>
+  );
+};
 
 const AppRouter: React.FC = () => {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path={"/"} element={<Login />} />
-          <Route path={"/list"} element={<List />} />
-          <Route path={"/detail"} element={<Detail />} />
+          <Route path={"/public/*"} element={<PublicRouter />} />
+          <Route path={"/private/*"} element={<PrivateRouter />} />
+          <Route path={"*"} element={<Navigate to={"/public"} />} />
         </Routes>
       </BrowserRouter>
     </>

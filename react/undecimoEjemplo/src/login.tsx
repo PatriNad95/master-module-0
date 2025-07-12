@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { generatePath, Link, useNavigate } from "react-router-dom";
 
 interface User {
   username: string;
@@ -21,7 +21,7 @@ export const Login: React.FC = () => {
   const handleNavigate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (user.username === "admin" && user.password === "test") {
-      navigate("/list");
+      navigate(generatePath("/private/list"));
     } else {
       alert("Invalid credentials");
     }
