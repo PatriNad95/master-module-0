@@ -13,10 +13,10 @@ interface Routes extends Omit<SwitchRoutes, "detail"> {
 export const switchRoutes: SwitchRoutes = {
   root: "/",
   list: "/list",
-  detail: "detail/:id",
+  detail: "/detail/:id",
 };
 
 export const routes: Routes = {
   ...switchRoutes,
-  detail: (id: string) => generatePath("detail/:id", { id }),
+  detail: (id: string) => generatePath("/detail/:id", { id }),
 };

@@ -1,6 +1,7 @@
+import { CenteredLayout } from "@/layout";
 import { routes } from "@/router";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <>
+    <CenteredLayout>
       <form onSubmit={handleNavigation}>
         <h2>Hello from login page</h2>
 
@@ -42,6 +43,6 @@ export const LoginPage: React.FC = () => {
 
         <button type="submit">Login</button>
       </form>
-    </>
+    </CenteredLayout>
   );
 };
