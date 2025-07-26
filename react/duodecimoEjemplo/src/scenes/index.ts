@@ -1,3 +1,3 @@
-export * from "./login";
-export * from "./list";
+export * from "./login.scene";
+export * from "./list.scene";
 export * from "./detail";
