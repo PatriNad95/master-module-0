@@ -20,7 +20,7 @@ export const ListPage: React.FC = () => {
   }, []);
 
   return (
-    <AppLayout>
+    <>
       <div className="list-user-list-container">
         <span className="list-header">Avatar</span>
         <span className="list-header">Id</span>
@@ -33,6 +33,6 @@ export const ListPage: React.FC = () => {
           </>
         ))}
       </div>
-    </AppLayout>
+    </>
   );
 };

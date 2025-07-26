@@ -50,6 +50,6 @@ body {
   background-color: #007661;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding-right: 5px;
 }

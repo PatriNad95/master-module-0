@@ -32,7 +32,7 @@ export const DetailPage: React.FC = () => {
   }, []);
 
   return (
-    <AppLayout>
+    <>
       <h2>Hello from Detail page</h2>
       <h3>User Id: {id}</h3>
       <p> id: {member.id}</p>
@@ -41,6 +41,6 @@ export const DetailPage: React.FC = () => {
       <p> company: {member.company}</p>
       <p> bio: {member.bio}</p>
       <Link to={routes.list}>Back to list page</Link>
-    </AppLayout>
+    </>
   );
 };
