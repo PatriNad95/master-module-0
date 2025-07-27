@@ -7,11 +7,15 @@ import { getMember } from "./api";
 import { mapMemberToVM } from "./detail.mapper";
 import { Detail } from "./detail.component";
 
-export const DetailContainer: React.FC = () => {
+interface Props {
+  id: string;
+}
+
+export const DetailContainer: React.FC<Props> = (props) => {
+  const { id } = props;
   const [member, setMember] = React.useState<MemberDetail>(
     createDefaultMemberDetail()
   );
-  const { id } = useParams();
 
   React.useEffect(() => {
     getMember(id).then(mapMemberToVM).then(setMember);

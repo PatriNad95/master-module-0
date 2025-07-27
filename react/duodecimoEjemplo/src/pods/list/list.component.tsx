@@ -6,10 +6,11 @@ import { ListHeader } from "./components";
 
 interface Props {
   members: Member[];
+  onSelect: (login: string) => void;
 }
 
 export const List: React.FC<Props> = (props) => {
-  const { members } = props;
+  const { members, onSelect } = props;
   return (
     <>
       <div className="list-user-list-container">
@@ -18,7 +19,12 @@ export const List: React.FC<Props> = (props) => {
           <>
             <img src={member.avatarUrl} />
             <span>{member.id}</span>
-            <Link to={routes.detail(member.login)}>{member.login}</Link>
+            <div
+              onClick={() => onSelect(member.login)}
+              style={{ color: "indianred", fontWeight: "bold" }}
+            >
+              {member.login}
+            </div>
           </>
         ))}
       </div>

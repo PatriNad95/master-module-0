@@ -1,6 +1,8 @@
 import { DetailContainer } from "@/pods/detail";
 import React from "react";
+import { useParams } from "react-router-dom";
 
 export const DetailScene: React.FC = () => {
-  return <DetailContainer />;
+  const { id } = useParams();
+  return <DetailContainer id={id} />;
 };
