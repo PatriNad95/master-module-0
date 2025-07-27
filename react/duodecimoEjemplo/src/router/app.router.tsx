@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { ListScene, DetailPage, LoginScene } from "@/scenes";
+import { ListScene, DetailScene } from "@/scenes";
 import { switchRoutes } from "./routes";
 import { AppLayout } from "@/layout";
 
@@ -23,7 +23,7 @@ export const AppRouter = () => {
             <AppLayout>
               <Routes>
                 <Route path={switchRoutes.list} element={<ListScene />} />
-                <Route path={switchRoutes.detail} element={<DetailPage />} />
+                <Route path={switchRoutes.detail} element={<DetailScene />} />
               </Routes>
             </AppLayout>
           }
