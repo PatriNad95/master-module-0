@@ -1,0 +1,8 @@
+<p>{{ label.toUpperCase() }}</p>
+<div class="container">
+  <!-- <input type="text" [placeholder]="placeHolder" class="field" /> -->
+  <input type="text" [placeholder]="placeHolder" [value]="name" class="field" />
+  <div class="icons-container">
+    <div class="icon-search" (click)="changeName()"></div>
+  </div>
+</div>
