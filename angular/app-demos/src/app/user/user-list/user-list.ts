@@ -1,51 +1,57 @@
 import { Component, OnInit } from '@angular/core';
 import { MemberEntity } from '../../model';
 import { CommonModule } from '@angular/common';
-
-const delay = (delay: number = 1_000) =>
-  new Promise((res) => {
-    setTimeout(() => {
-      res(undefined);
-    }, delay);
-  });
-
-const memberFact = () => [
-  {
-    avatar_url: '',
-    id: '1',
-    login: 'lk',
-  },
-  {
-    avatar_url: '',
-    id: '2',
-    login: 'dsf',
-  },
-];
+import { Highlight } from '../../directives/highlight';
+import { FormsModule } from '@angular/forms';
+import { SearchByLoginPipe } from '../../pipes/search-by-login-pipe';
 
 @Component({
   selector: 'app-user-list',
-  imports: [CommonModule],
+  imports: [CommonModule, Highlight, FormsModule, SearchByLoginPipe],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
 })
 export class UserList implements OnInit {
   members: MemberEntity[] = [];
-
-  constructor() {
-    console.log('Constructor');
-    // setTimeout(() => {
-    //   this.members = [
-    //     {
-    //       avatar_url: '',
-    //       id: '1',
-    //       login: 'lk',
-    //     },
-    //   ];
-    // }, 4000);
-  }
+  newMember: MemberEntity = {
+    id: '',
+    login: '',
+    avatar_url: '',
+  };
 
   async ngOnInit(): Promise<void> {
-    await delay(3_000);
-    this.members = memberFact();
+    try {
+      const response = await fetch(
+        'https://api.github.com/orgs/lemoncode/members'
+      );
+      if (response.ok) {
+        const result = await response.json();
+        this.members = result;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  add() {
+    this.members.push(this.newMember);
+    this.resetNewMember();
+  }
+
+  private resetNewMember() {
+    this.newMember = {
+      id: '',
+      login: '',
+      avatar_url: '',
+    };
+  }
+
+  handleFileInput($event: any) {
+    const files = $event.target.files as FileList;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onload = () => {
+      this.newMember.avatar_url = reader.result as string;
+    };
   }
 }

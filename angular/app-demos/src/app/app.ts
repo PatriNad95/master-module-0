@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Search } from './utils/search/search';
 import { UserList } from './user/user-list/user-list';
+import { Menu } from './menu/menu';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,7 @@ import { UserList } from './user/user-list/user-list';
     // RouterOutlet,
     // Search,
     UserList,
+    Menu,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

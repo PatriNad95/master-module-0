@@ -1,17 +1,67 @@
-<pre> {{ members | json }}</pre>
+<!-- <pre> {{ members | json }}</pre> -->
+<h2>Alta</h2>
+
+<form #addForm="ngForm">
+  <div>
+    <label>ID</label>
+    <input
+      name="id"
+      type="text"
+      [(ngModel)]="newMember.id"
+      required
+      #id="ngModel"
+    />
+    <div *ngIf="id.invalid && id.touched">El id es requerido</div>
+  </div>
+  <div>
+    <label>Name</label>
+    <input
+      name="name"
+      type="text"
+      [(ngModel)]="newMember.login"
+      minlength="6"
+      #name="ngModel"
+      required
+    />
+    <div *ngIf="name.invalid && name.touched">
+      <div *ngIf="name.errors!['required']">El name es requerido</div>
+      <div *ngIf="name.errors!['minlength']">
+        El name debe tener 6 carácteres
+      </div>
+    </div>
+  </div>
+  <div>
+    <label>Avatar</label>
+    <input
+      name="avatar"
+      type="file"
+      accept="image/*"
+      (change)="handleFileInput($event)"
+    />
+    <div><img [src]="newMember.avatar_url" width="50" /></div>
+  </div>
+  <button [disabled]="addForm.invalid" (click)="add()">Añadir</button>
+</form>
+
+<h2>Listado</h2>
+
+<div>
+  <label>Buscar por nombre</label>
+  <input type="text" #search (keyup)="(0)" />
+</div>
 
 <table>
   <thead>
     <tr>
-      <th>Avatar</th>
+      <th appHighlight color="pink">Avatar</th>
       <th>Id</th>
       <th>Name</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let member of members">
+    <tr *ngFor="let member of members | searchByLogin : search.value">
       <td>
-        <!-- <img [src]="xxxxxx" /> -->
+        <img [src]="member.avatar_url" />
       </td>
       <td>
         <span>{{ member.id }}</span>
