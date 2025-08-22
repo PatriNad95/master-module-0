@@ -1,48 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MemberEntity } from '../../model';
 import { CommonModule } from '@angular/common';
 import { Highlight } from '../../directives/highlight';
-import {
-  FormBuilder,
-  FormsModule,
-  ReactiveFormsModule,
-  FormGroup,
-  FormControl,
-  Validators,
-} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { SearchByLoginPipe } from '../../pipes/search-by-login-pipe';
 import { MembersService } from '../../services/members';
+import { Subscription } from 'rxjs';
+import { UserEdit } from '../user-edit/user-edit';
 
 @Component({
   selector: 'app-user-list',
-  imports: [
-    CommonModule,
-    Highlight,
-    FormsModule,
-    SearchByLoginPipe,
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, Highlight, FormsModule, SearchByLoginPipe, UserEdit],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
 })
-export class UserList implements OnInit {
+export class UserList implements OnInit, OnDestroy {
   members: MemberEntity[] = [];
-  selectedMember!: MemberEntity;
   newMember!: MemberEntity;
-  editForm!: FormGroup;
-  idControl!: FormControl;
-  loginControl!: FormControl;
-  avatarControl!: FormControl;
+  selectedMember!: MemberEntity;
+  sub!: Subscription;
 
-  constructor(
-    private membersService: MembersService,
-    private fb: FormBuilder
-  ) {}
+  constructor(private membersService: MembersService) {}
 
-  async ngOnInit(): Promise<void> {
-    this.members = await this.membersService.getOrgMembers();
+  ngOnInit() {
+    this.sub = this.membersService
+      .getOrgMembers()
+      .subscribe((members) => (this.members = members));
     this.resetNewMember();
-    this.createEditForm();
   }
 
   add() {
@@ -69,38 +53,18 @@ export class UserList implements OnInit {
 
   // Para formulario reactivo
 
-  createEditForm(): void {
-    this.editForm = this.fb.group({
-      id: ['', Validators.required],
-      login: ['', [Validators.required, Validators.minLength(6)]],
-      avatar_url: '',
-    });
-
-    this.idControl = this.editForm.get('id') as FormControl;
-    this.loginControl = this.editForm.get('login') as FormControl;
-    this.avatarControl = this.editForm.get('avatar_url') as FormControl;
-  }
-
   select(member: MemberEntity): void {
     this.selectedMember = member;
-    this.editForm.patchValue(this.selectedMember);
   }
 
-  handleEditFileInput($event: any) {
-    const files = $event.target.files as FileList;
-    const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onload = () => {
-      this.avatarControl.setValue(reader.result);
-    };
+  save($event: MemberEntity) {
+    this.members = [...this.members];
+    const member = $event;
+    const index = this.members.findIndex((i) => i.id === member.id);
+    this.members.splice(index, 1, member);
   }
 
-  save() {
-    if (this.editForm.valid) {
-      this.members = [...this.members];
-      const member = this.editForm.value;
-      const index = this.members.findIndex((i) => i.id === member.id);
-      this.members.splice(index, 1, member);
-    }
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 }

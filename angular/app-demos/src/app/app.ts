@@ -7,7 +7,7 @@ import { Menu } from './menu/menu';
 @Component({
   selector: 'app-root',
   imports: [
-    // RouterOutlet,
+    RouterOutlet,
     // Search,
     UserList,
     Menu,
