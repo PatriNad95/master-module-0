@@ -1,9 +1,10 @@
 import { Component, ElementRef } from '@angular/core';
 import { Highlight } from '../directives/highlight';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
-  imports: [Highlight],
+  imports: [RouterLink],
   templateUrl: './menu.html',
   styleUrl: './menu.css',
 })
