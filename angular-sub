@@ -1,0 +1,39 @@
+export class AppComponent implements OnInit, OnDestroy {
+  pageTitle = "movies";
+
+  sub!: Subscription;
+  subArray!: Subscription;
+  subFrom!: Subscription;
+  subEvent!: Subscription;
+  subEventKey!: Subscription;
+
+  ngOnInit(): void {
+    this.sub = of(2, 4, 6, 8).subscribe((i) =>
+      console.log(`Value from 'of': ${i}`)
+    );
+    this.subArray = of([2, 4, 6, 8]).subscribe((i) =>
+      console.log(`Value from 'of' using Array: ${i}`)
+    );
+    this.subFrom = from([2, 4, 6, 8]).subscribe({
+      next: (i) => console.log(i),
+      complete: () => console.log("Completed"),
+    });
+    this.subEvent = fromEvent(document, "click").subscribe({
+      next: (ev) => console.log("Click event", ev.target),
+      complete: () => console.log("No more events"),
+    });
+    const keys: string[] = [];
+    this.subEventKey = fromEvent(document, "keydown").subscribe((ev) => {
+      const k = (ev as KeyboardEvent).key;
+      keys.push(k);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+    this.subArray.unsubscribe();
+    this.subFrom.unsubscribe();
+    this.subEvent.unsubscribe();
+    this.subEventKey.unsubscribe();
+  }
+}
