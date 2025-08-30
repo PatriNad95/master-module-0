@@ -1,6 +1,15 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, EMPTY, map, Observable, of, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  EMPTY,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { Movie } from './movie';
 import { HttpErrorService } from '../utilities/http-error.service';
 import { ReviewService } from '../reviews/review.service';
@@ -27,7 +36,7 @@ export class MovieService {
     const movieUrl = `${this.moviesUrl}/${id}`;
     return this.http.get<Movie>(movieUrl).pipe(
       tap(() => console.log('In http.get pipeline')),
-      // map((movie) => this.getMovieWithReviews(movie)),
+      switchMap((movie) => this.getMovieWithReviews(movie)),
       catchError((err) => this.handleError(err))
     );
   }
