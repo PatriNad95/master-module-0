@@ -6,9 +6,12 @@ import {
   map,
   Observable,
   of,
+  shareReplay,
   switchMap,
   tap,
   throwError,
+  BehaviorSubject,
+  filter,
 } from 'rxjs';
 import { Movie } from './movie';
 import { HttpErrorService } from '../utilities/http-error.service';
@@ -25,21 +28,30 @@ export class MovieService {
   private errorService = inject(HttpErrorService);
   private reviewService = inject(ReviewService);
 
-  getMovies(): Observable<Movie[]> {
-    return this.http.get<Movie[]>(this.moviesUrl).pipe(
-      tap(() => console.log('In http.get pipeline')),
-      catchError((err) => this.handleError(err))
-    );
-  }
+  private movieSelectedSubject = new BehaviorSubject<number | undefined>(
+    undefined
+  );
+  readonly movieSelected$ = this.movieSelectedSubject.asObservable();
 
-  getMovie(id: number): Observable<Movie> {
-    const movieUrl = `${this.moviesUrl}/${id}`;
-    return this.http.get<Movie>(movieUrl).pipe(
+  readonly movies$: Observable<Movie[]> = this.http
+    .get<Movie[]>(this.moviesUrl)
+    .pipe(
       tap(() => console.log('In http.get pipeline')),
-      switchMap((movie) => this.getMovieWithReviews(movie)),
+      shareReplay(1),
       catchError((err) => this.handleError(err))
     );
-  }
+
+  readonly movie$ = this.movieSelected$.pipe(
+    filter(Boolean),
+    switchMap((id) => {
+      const movieUrl = `${this.moviesUrl}/${id}`;
+      return this.http.get<Movie>(movieUrl).pipe(
+        tap(() => console.log('In http.get pipeline')),
+        switchMap((movie) => this.getMovieWithReviews(movie)),
+        catchError(this.handleError)
+      );
+    })
+  );
 
   getMovieWithReviews(movie: Movie): Observable<Movie> {
     if (movie.hasReviews) {
@@ -48,6 +60,10 @@ export class MovieService {
         .pipe(map((reviews) => ({ ...movie, reviews: reviews } as Movie)));
     }
     return of(movie);
+  }
+
+  movieSelected(selectedMovieId: number): void {
+    this.movieSelectedSubject.next(selectedMovieId);
   }
 
   private handleError(err: HttpErrorResponse): Observable<never> {

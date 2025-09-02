@@ -1,10 +1,17 @@
-import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import {
+  AsyncPipe,
+  CommonModule,
+  CurrencyPipe,
+  NgFor,
+  NgIf,
+} from '@angular/common';
 import {
   Component,
   inject,
   Input,
   OnChanges,
   OnDestroy,
+  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import { Movie } from '../movie';
@@ -14,43 +21,27 @@ import { MovieService } from '../movie.service';
 @Component({
   selector: 'app-movie-detail',
   standalone: true,
-  imports: [NgIf, NgFor, CurrencyPipe],
+  imports: [CommonModule, CurrencyPipe, AsyncPipe],
   templateUrl: './movie-detail.component.html',
   styles: ``,
 })
-export class MovieDetailComponent implements OnChanges, OnDestroy {
+export class MovieDetailComponent {
   private movieService = inject(MovieService);
-  // Just enough here for the template to compile
-  @Input() movieId: number = 0;
-  errorMessage = '';
-  sub!: Subscription;
 
-  // Movie to display
-  movie: Movie | null = null;
+  errorMessage = '';
 
   // Set the page title
-  pageTitle = this.movie
-    ? `Product Detail for: ${this.movie.movieName}`
-    : 'Movie Detail';
+  // pageTitle = this.movie
+  // ? `Product Detail for: ${this.movie.movieName}`
+  // : 'Movie Detail';
+  pageTitle = 'Movie Detail';
+  // Movie to display
+  movie$ = this.movieService.movie$.pipe(
+    catchError((err) => {
+      this.errorMessage = err;
+      return EMPTY;
+    })
+  );
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const id = changes['movieId'].currentValue;
-    if (id > 0) {
-      this.sub = this.movieService
-        .getMovie(id)
-        .pipe(
-          catchError((err) => {
-            this.errorMessage = err;
-            return EMPTY;
-          })
-        )
-        .subscribe((movie) => {
-          this.movie = movie;
-        });
-    }
-  }
   addToCart(movie: Movie) {}
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
-  }
 }
