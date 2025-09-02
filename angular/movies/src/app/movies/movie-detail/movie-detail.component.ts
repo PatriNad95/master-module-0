@@ -30,11 +30,6 @@ export class MovieDetailComponent {
 
   errorMessage = '';
 
-  // Set the page title
-  // pageTitle = this.movie
-  // ? `Product Detail for: ${this.movie.movieName}`
-  // : 'Movie Detail';
-  pageTitle = 'Movie Detail';
   // Movie to display
   movie$ = this.movieService.movie$.pipe(
     catchError((err) => {
