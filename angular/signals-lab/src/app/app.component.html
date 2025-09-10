@@ -177,7 +177,7 @@
   }
 </style>
 
-<h2>Shopping Cart</h2>
+<!-- <h2>Shopping Cart</h2>
 
 <select [ngModel]="quantity()" (ngModelChange)="onQuantitySelected($event)">
   <option disabled value="">--Select a quantity--</option>
@@ -187,6 +187,15 @@
 <div>{{ quantity() }}</div>
 <div>Product {{ selectedProduct().name }}</div>
 <div>Price {{ selectedProduct().price }}</div>
-<div [style.color]="color()">Extended price: {{ exPrice() | currency }}</div>
+<div [style.color]="color()">Extended price: {{ exPrice() | currency }}</div> -->
 
 <!-- <router-outlet /> -->
+<app-normal />
+<app-signal />
+
+<br />
+
+<h2>Persons</h2>
+<div>
+  <app-persons />
+</div>
