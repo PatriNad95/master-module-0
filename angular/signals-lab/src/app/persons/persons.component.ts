@@ -1,6 +1,8 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, Signal, signal } from '@angular/core';
 import { PersonService } from './person.service';
 import { Person } from './person';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounce, debounceTime, map, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-persons',
@@ -8,7 +10,7 @@ import { Person } from './person';
   template: `
     <input type="number" (input)="updateNumberOfPersons($event)" />
     <ul>
-      @for (person of persons; track person.id) {
+      @for (person of persons(); track person.id) {
       <li>
         {{ person.name }}
       </li>
@@ -20,7 +22,7 @@ import { Person } from './person';
 })
 export class PersonsComponent {
   numberOfPersons = signal<number>(0);
-  persons: Person[] = [];
+  // persons: Person[] = [];
 
   private personsSvc = inject(PersonService);
 
@@ -28,9 +30,19 @@ export class PersonsComponent {
     this.numberOfPersons.set(+(event.target as HTMLInputElement).value);
   }
 
-  e = effect(() => {
-    this.personsSvc.getPersons(this.numberOfPersons()).subscribe((persons) => {
-      this.persons = persons;
-    });
-  });
+  // e = effect(() => {
+  //   this.personsSvc.getPersons(this.numberOfPersons()).subscribe((persons) => {
+  //     this.persons = persons;
+  //   });
+  // });
+
+  persons = toSignal(
+    toObservable(this.numberOfPersons).pipe(
+      debounceTime(500),
+      tap((t) => t),
+      switchMap((numberOfPersons) =>
+        this.personsSvc.getPersons(numberOfPersons)
+      )
+    )
+  ) as Signal<Person[]>;
 }
