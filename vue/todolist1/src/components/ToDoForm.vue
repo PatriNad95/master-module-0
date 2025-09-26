@@ -1,15 +1,12 @@
 <script setup lang="ts">
+import { useToDosStore } from '@/stores/toDos'
 import { ref } from 'vue'
-import { defineEmits } from 'vue'
-
-const emit = defineEmits<{
-  'add-to-do': [toDos: string]
-}>()
 
 const toDoInput = ref('')
 
+const toDoStore = useToDosStore()
 const addToDo = () => {
-  emit('add-to-do', toDoInput.value)
+  toDoStore.addToDo(toDoInput.value)
   toDoInput.value = ''
 }
 </script>
