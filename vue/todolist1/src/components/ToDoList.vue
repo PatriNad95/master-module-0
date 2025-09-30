@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { useToDosStore } from '@/stores/toDos'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const toDoStore = useToDosStore()
-
-onMounted(() => {
-  toDoStore.loadToDos()
-})
 
 const onChange = (timestamp: number) => {
   toDoStore.toggleCompleted(timestamp)
@@ -15,11 +11,36 @@ const onChange = (timestamp: number) => {
 const onRemove = (timestamp: number) => {
   toDoStore.removeToDo(timestamp)
 }
+
+const toDosToShow = ref(toDoStore.toDos)
+
+const showOnlyPendingToDos = (event: Event) => {
+  const isChecked = (event.target as HTMLInputElement).checked
+  if (isChecked) {
+    toDosToShow.value = toDoStore.pendingToDos
+  } else {
+    toDosToShow.value = toDoStore.toDos
+  }
+}
+
+onMounted(() => {
+  toDoStore.loadToDos()
+  toDosToShow.value = toDoStore.toDos
+})
 </script>
 
 <template>
+  <div v-if="toDoStore.total">
+    <p>Total: {{ toDoStore.total }}</p>
+    <p>Completados: {{ toDoStore.completed }}</p>
+  </div>
+  <div>
+    <input type="checkbox" id="toggle-all" @change="showOnlyPendingToDos" />
+    <label for="toggle-all">Show only pending</label>
+  </div>
+  <hr />
   <ul class="max-w-[500px]">
-    <li v-for="toDo in toDoStore.toDos" :key="toDo.timestamp">
+    <li v-for="toDo in toDosToShow" :key="toDo.timestamp">
       <form @submit.prevent class="flex items-center justify-between">
         <input
           type="checkbox"

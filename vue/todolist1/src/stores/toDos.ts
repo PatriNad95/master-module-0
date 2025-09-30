@@ -1,6 +1,7 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { ToDo } from '@/types'
+import { useStorage } from '@/composables/storage'
 
 const toDoFactory = (text: string): ToDo => ({
   timestamp: Date.now(),
@@ -8,27 +9,22 @@ const toDoFactory = (text: string): ToDo => ({
   completed: false,
 })
 
-const getToDosFromStorage = (): ToDo[] => {
-  const toDos = localStorage.getItem('toDos') ? JSON.parse(localStorage.getItem('toDos')!) : []
-  return toDos
-}
-
-const setToDosInStorage = (toDo: ToDo) => {
-  const toDos = getToDosFromStorage()
-  toDos.push(toDo)
-  localStorage.setItem('toDos', JSON.stringify(toDos))
-}
-
 export const useToDosStore = defineStore('toDoList', () => {
   const toDos = ref<ToDo[]>([])
+  const total = computed(() => toDos.value.length)
+  const completedToDos = computed(() => toDos.value.filter((toDo) => toDo.completed))
+  const completed = computed(() => completedToDos.value.length)
+  const pendingToDos = computed(() => toDos.value.filter((toDo) => !toDo.completed))
+
+  const storage = useStorage<ToDo[]>('toDos')
 
   const loadToDos = () => {
-    toDos.value = getToDosFromStorage()
+    toDos.value = storage.get()!
   }
   const addToDo = (toDo: string) => {
     const newToDo = toDoFactory(toDo)
     toDos.value.push(newToDo)
-    setToDosInStorage(newToDo)
+    storage.set(toDos.value)
   }
 
   const toggleCompleted = (timestamp: number) => {
@@ -36,6 +32,7 @@ export const useToDosStore = defineStore('toDoList', () => {
     if (toDo) {
       toDo.completed = !toDo.completed
     }
+    storage.set(toDos.value)
   }
 
   const removeToDo = (timestamp: number) => {
@@ -43,7 +40,18 @@ export const useToDosStore = defineStore('toDoList', () => {
     if (index !== -1) {
       toDos.value.splice(index, 1)
     }
+    storage.set(toDos.value)
   }
 
-  return { toDos, loadToDos, addToDo, toggleCompleted, removeToDo }
+  return {
+    total,
+    completed,
+    completedToDos,
+    pendingToDos,
+    toDos,
+    loadToDos,
+    addToDo,
+    toggleCompleted,
+    removeToDo,
+  }
 })
