@@ -11,10 +11,10 @@ const toDoFactory = (text: string): ToDo => ({
 
 export const useToDosStore = defineStore('toDoList', () => {
   const toDos = ref<ToDo[]>([])
-  const total = computed(() => toDos.value.length)
-  const completedToDos = computed(() => toDos.value.filter((toDo) => toDo.completed))
+  const total = computed(() => toDos.value?.length ?? 0)
+  const completedToDos = computed(() => (toDos.value ?? []).filter((toDo) => toDo.completed))
   const completed = computed(() => completedToDos.value.length)
-  const pendingToDos = computed(() => toDos.value.filter((toDo) => !toDo.completed))
+  const pendingToDos = computed(() => (toDos.value ?? []).filter((toDo) => !toDo.completed))
 
   const storage = useStorage<ToDo[]>('toDos')
 
