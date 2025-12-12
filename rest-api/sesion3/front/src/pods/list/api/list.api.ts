@@ -1,15 +1,19 @@
 import axios from 'axios';
 import { Item } from './list.api-model';
 
-const clientUrl = '/api/clients';
-const orderUrl = '/api/orders';
+const clientUrl = 'http://localhost:3000/api/clients';
+const orderUrl = 'http://localhost:3000/api/orders';
 
 export const getClientList = async (): Promise<Item[]> => {
-  const { data } = await axios.get(clientUrl);
+  const { data } = await axios.get(clientUrl, {
+    withCredentials: true,
+  });
   return data;
 };
 
 export const getOrderList = async (): Promise<Item[]> => {
-  const { data } = await axios.get(orderUrl);
+  const { data } = await axios.get(orderUrl, {
+    withCredentials: true,
+  });
   return data;
 };

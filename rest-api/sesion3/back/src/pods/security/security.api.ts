@@ -2,7 +2,7 @@ import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { ENV, HEADERS } from '#core/constants/index.js';
 import { User, UserSession } from './security.api-model.js';
-import { JWT_SIGN_ALGORITHM } from './security.constants.js';
+import { COOKIE_OPTIONS, JWT_SIGN_ALGORITHM } from './security.constants.js';
 
 export const securityApi = Router();
 
@@ -33,6 +33,8 @@ securityApi
 
     if (currentUser) {
       const userSession = createUserSession(currentUser);
+      const token = createToken(currentUser);
+      res.cookie(HEADERS.AUTHORIZATION, token, COOKIE_OPTIONS);
       res.send(userSession);
     } else {
       res.sendStatus(401);
@@ -43,6 +45,7 @@ securityApi
     // Different approaches:
     // - Short expiration times in token
     // - Black list tokens on DB
+    // res.clearCookie(HEADERS.AUTHORIZATION);
     res.sendStatus(200);
   });
 
@@ -50,12 +53,17 @@ const createUserSession = (user: User): UserSession => {
   return {
     firstname: user.firstname,
     lastname: user.lastname,
-    token: '',
   };
 };
 
 const createToken = (user: User): string => {
   const tokenPayload = { userId: user.id };
+
+  // const token = '1234';
+
+  // // DB
+  // await saveToken(user.id, token);
+
   const token = jwt.sign(tokenPayload, ENV.TOKEN_AUTH_SECRET, {
     expiresIn: ENV.ACCESS_TOKEN_EXPIRES_IN,
     algorithm: JWT_SIGN_ALGORITHM,
