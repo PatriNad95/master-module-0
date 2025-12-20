@@ -24,7 +24,19 @@ export const getHotelCollection = async (): Promise<HotelEntityApi[]> => {
   return hotels;
 };
 
+interface DeleteHotelResponse {
+  deleteHotel: boolean;
+}
+
 export const deleteHotel = async (id: string): Promise<boolean> => {
-  await axios.delete(`${url}/${id}`);
-  return true;
+  const query = `
+    mutation ($id: ID!) {
+      deleteHotel(id: $id)
+    }
+  `;
+  const { deleteHotel } = await graphql<DeleteHotelResponse, { id: string }>({
+    query,
+    variables: { id },
+  });
+  return deleteHotel;
 };

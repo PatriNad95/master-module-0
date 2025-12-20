@@ -16,5 +16,26 @@ export const schema = graphql(`
 
   type Query {
     hotels: [Hotel!]!
+    hotel(id: ID!): Hotel!
+    cities: [City!]!
+  }
+
+  input HotelInput {
+    id: ID!
+    name: String!
+    address1: String!
+    city: String!
+    hotelRating: Float!
+    shortDescription: String!
+  }
+
+  type Mutation {
+    saveHotel(hotel: HotelInput!): Boolean
+    deleteHotel(id: ID!): Boolean
+  }
+
+  type City {
+    id: ID!
+    name: String!
   }
 `);
